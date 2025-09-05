@@ -28,7 +28,11 @@ grep "ERROR" app.log | categorize these errors > error_types.txt
 - **Easily extensible**: Simply implement a new `__send_to` function to `ash.zsh`. Feel free to create pull request
 
 ## Installation
-Clone the repository and use the installer file. Follow on screen instructions for further information. The installer will append the following lines into your config file (zsh)
+Universal one line installer
+```sh
+sh -c 't=$(mktemp) && curl -fsSL https://raw.githubusercontent.com/NotNanook/Ash/main/installer.sh -o "$t" && bash "$t"; r=$?; rm -f "$t"; exit $r'
+```
+Or clone the repository and use the installer file. Follow on screen instructions for further information. The installer will append the following lines into your config file (zsh)
 ```zsh
 # BEGIN ash
 if [[ -f "/home/user/.config/ash/ash.zsh" ]]; then

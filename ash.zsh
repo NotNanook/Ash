@@ -1,7 +1,7 @@
 # BEGIN ash
 CONFIG_DIR="$HOME/.config/ash"
 CONFIG_FILE="$CONFIG_DIR/config.json"
-CHAT_HISTORY="$CONFIG_DIR/conversation.json"
+CHAT_HISTORY="$HOME/.ash_history.json"
 MAX_HISTORY=15
 
 __get_attr() {
@@ -174,15 +174,16 @@ __send_to_anthropic() {
   return 0
 }
 
-__send_to_openai() {
+__send_to_openai_standard() {
   local prompt="$1"
-
+  local api_url="$2"
+  
   __init_ash
 
   local messages=$(__load_conversation)
   messages=$(printf '%s' "$messages" | jq --arg prompt "$prompt" '. + [{"role": "user", "content": $prompt}]')
   messages=$(__trim_conversation "$messages")
-
+  
   local json_payload
   json_payload=$(jq -n \
     --arg model "$(__get_attr 'model')" \
@@ -191,19 +192,19 @@ __send_to_openai() {
       "model": $model,
       "messages": $messages
     }')
-
+  
   local response
-  response=$(__exec_and_wait curl -s -X POST "https://api.openai.com/v1/chat/completions" \
+  response=$(__exec_and_wait curl -s -X POST "$api_url" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $(__get_attr 'api_key')" \
     -d "$json_payload")
+  
   local curl_status=$?
-
   if [[ $curl_status -ne 0 ]]; then
-    echo "Error: Failed to connect to OpenAI API"
+    echo "Error: Failed to connect to API"
     return 1
   fi
-
+  
   local content
   content=$(printf '%s' "$response" | jq -r '.choices[0].message.content')
   messages=$(printf '%s' "$messages" | jq --arg content "$content" '. + [{"role": "assistant", "content": $content}]')
@@ -230,7 +231,7 @@ command_not_found_handler() {
   if [[ ${#prompt} -gt 3 ]]; then
     case "${provider:l}" in 
     "openai")
-      __send_to_openai "$prompt"
+      __send_to_openai_standard "$prompt" "https://api.openai.com/v1/chat/completions"
       ;;
     "anthropic")
       __send_to_anthropic "$prompt"
@@ -238,6 +239,11 @@ command_not_found_handler() {
     "ollama")
       __send_to_ollama "$prompt"
       ;;
+    "openrouter")
+      __send_to_openai_standard "$prompt" "https://openrouter.ai/api/v1/chat/completions"
+      ;;
+    *)
+      echo "Provider ${provider} not recognized. Currently supported are OpenAI, Anthropic, Ollama and OpenRouter"
     esac 
     return 0
   fi

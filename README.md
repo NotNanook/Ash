@@ -44,5 +44,5 @@ fi
 ## Configuration
 Ash file: `~/.config/ash/ash.zsh` or `~/.config/ash/ash.sh`<br>
 Config file: `~/.config/ash/config.json`<br>
-Chat history: `~/.config/ash/conversation.json`<br>
+Chat history: `~/.ash_history.json`<br>
 History limit: 15 messages (configurable via MAX_HISTORY in script)<br>

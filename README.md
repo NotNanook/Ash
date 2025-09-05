@@ -1,5 +1,5 @@
 # Ash
-A no-bullshit, seamless way to use LLMs right inside your shell (bash, zsh). Supports OpenAI, Claude and Ollama
+A no-bullshit, seamless way to use LLMs right inside your shell (bash, zsh). Supports OpenAI, Claude, Ollama and OpenRouter
 
 ## Why?
 

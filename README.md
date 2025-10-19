@@ -41,12 +41,20 @@ fi
 # END ash
 ```
 
+## Configuration
+After installation edit the config file found under `~/.config/ash/config.json` to change your provider, choose your model and add your API key
+```json
+{
+    "provider": "enter-your-provider",
+    "api_key": "enter-your-api-key",
+    "model": "enter-your-model"
+}
+```
+Other important files:
+- Ash Script files: `~/.config/ash/ash.zsh` or `~/.config/ash/ash.sh`
+- Chat history: `~/.ash_history.json`
+You can change the chat history limit via MAX_HISTORY in script. Default is 15 messages
+
 ## Dependencies
 `jq`
 `curl`
-
-## Configuration
-Ash file: `~/.config/ash/ash.zsh` or `~/.config/ash/ash.sh`<br>
-Config file: `~/.config/ash/config.json`<br>
-Chat history: `~/.ash_history.json`<br>
-History limit: 15 messages (configurable via MAX_HISTORY in script)<br>

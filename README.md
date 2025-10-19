@@ -30,7 +30,7 @@ grep "ERROR" app.log | categorize these errors > error_types.txt
 ## Installation
 Universal one line installer
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/NotNanook/Ash/main/installer.sh)
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/NotNanook/Ash/refs/heads/main/installer.sh)"
 ```
 Or clone the repository and use the installer file. Follow on screen instructions for further information. The installer will append the following lines into your config file (zsh)
 ```zsh

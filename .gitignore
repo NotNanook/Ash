@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/ash
+ash.so
+ash.dylib
+ash.dll
+ash.a
+ash.lib
+ash-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst

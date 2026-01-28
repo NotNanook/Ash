@@ -1,0 +1,13 @@
+{
+	"authors": [
+		"nanook"
+	],
+	"copyright": "Copyright © 2026, nanook",
+	"dependencies": {
+		"argsd": "~>1.2.0",
+		"requests": "~>2.2.0"
+	},
+	"description": "A no-bullshit, seamless way to use LLMs right inside your shell. Supports bash, zsh and fish",
+	"license": "MIT",
+	"name": "ash"
+}

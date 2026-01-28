@@ -1,0 +1,11 @@
+{
+	"fileVersion": 1,
+	"versions": {
+		"argsd": "1.2.0",
+		"automem": "0.6.11",
+		"cachetools": "0.4.2",
+		"requests": "2.2.0",
+		"test_allocator": "0.3.4",
+		"unit-threaded": "2.2.3"
+	}
+}

@@ -1,5 +1,5 @@
 # Ash
-A no-bullshit, seamless way to use LLMs right inside your shell (bash, zsh). Supports OpenAI, Claude, Ollama and OpenRouter
+A no-bullshit, seamless way to use LLMs right inside your shell (bash, zsh). Supports OpenAI, Ollama and OpenRouter
 
 ## Why?
 
@@ -25,21 +25,12 @@ git log --oneline -10 | summarize recent changes
 grep "ERROR" app.log | categorize these errors > error_types.txt
 ```
 
-- **Easily extensible**: Simply implement a new `__send_to` function to `ash.zsh`. Feel free to create pull request
+**Note:** This feature currently doesnt work in fish because of restrictions in the command not found handler
+
+- **Easily extensible**: Simply implement a new provider to use your llm of choice
 
 ## Installation
-Universal one line installer
-```sh
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/NotNanook/Ash/refs/heads/main/installer.sh)"
-```
-Or clone the repository and use the installer file. Follow on screen instructions for further information. The installer will append the following lines into your config file (zsh)
-```zsh
-# BEGIN ash
-if [[ -f "/home/user/.config/ash/ash.zsh" ]]; then
-    source "/home/user/.config/ash/ash.zsh"
-fi
-# END ash
-```
+Clone the repository and build the project. Execute the binary and follow on screen instructions for further information. The installer will move the binary into `/usr/local/bin` and append some lines into your shell config
 
 ## Configuration
 After installation edit the config file found under `~/.config/ash/config.json` to change your provider, choose your model and add your API key
@@ -51,10 +42,8 @@ After installation edit the config file found under `~/.config/ash/config.json` 
 }
 ```
 Other important files:
-- Ash Script files: `~/.config/ash/ash.zsh` or `~/.config/ash/ash.sh`
 - Chat history: `~/.ash_history.json`
-You can change the chat history limit via MAX_HISTORY in script. Default is 15 messages
 
 ## Dependencies
-`jq`
-`curl`
+`"argsd": "1.2.0"`<br>
+`"requests": "2.2.0"`

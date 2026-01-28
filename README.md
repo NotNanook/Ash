@@ -28,7 +28,11 @@ grep "ERROR" app.log | categorize these errors > error_types.txt
 - **Easily extensible**: Simply implement a new `__send_to` function to `ash.zsh`. Feel free to create pull request
 
 ## Installation
-Clone the repository and use the installer file. Follow on screen instructions for further information. The installer will append the following lines into your config file (zsh)
+Universal one line installer
+```sh
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/NotNanook/Ash/refs/heads/main/installer.sh)"
+```
+Or clone the repository and use the installer file. Follow on screen instructions for further information. The installer will append the following lines into your config file (zsh)
 ```zsh
 # BEGIN ash
 if [[ -f "/home/user/.config/ash/ash.zsh" ]]; then
@@ -37,12 +41,20 @@ fi
 # END ash
 ```
 
+## Configuration
+After installation edit the config file found under `~/.config/ash/config.json` to change your provider, choose your model and add your API key
+```json
+{
+    "provider": "enter-your-provider",
+    "api_key": "enter-your-api-key",
+    "model": "enter-your-model"
+}
+```
+Other important files:
+- Ash Script files: `~/.config/ash/ash.zsh` or `~/.config/ash/ash.sh`
+- Chat history: `~/.ash_history.json`
+You can change the chat history limit via MAX_HISTORY in script. Default is 15 messages
+
 ## Dependencies
 `jq`
 `curl`
-
-## Configuration
-Ash file: `~/.config/ash/ash.zsh` or `~/.config/ash/ash.sh`<br>
-Config file: `~/.config/ash/config.json`<br>
-Chat history: `~/.ash_history.json`<br>
-History limit: 15 messages (configurable via MAX_HISTORY in script)<br>

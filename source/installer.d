@@ -50,7 +50,7 @@ void installScript(string configPath) {
         }
     }
 
-    string destPath = "/usr/local/bin/ash-d";
+    string destPath = "/usr/local/bin/ash";
     writeln("Installing binary to /usr/local/bin (requires sudo)...");
     string installCmd = format("sudo install -m 755 %s %s", thisExePath(), destPath);
     auto pid = spawnShell(installCmd);
@@ -60,7 +60,7 @@ void installScript(string configPath) {
     }
 
     string bashHook = format(`
-# ash-d
+# ash
 command_not_found_handle() {
     if [ ! -t 0 ]; then
         data=$(cat)
@@ -74,7 +74,7 @@ command_not_found_handle() {
     string zshHook = bashHook.replace("command_not_found_handle", "command_not_found_handler");
 
     string fishHook = format(`
-# ash-d
+# ash
 function fish_command_not_found
     "%s" "$argv"
 end`, destPath);
@@ -92,7 +92,7 @@ end`, destPath);
 
         if (exists(path)) {
             string content = readText(path);
-            if (canFind(content, "ash-d")) {
+            if (canFind(content, "ash")) {
                 writeln(t[0], ": Hook already installed. Skipping.");
                 continue;
             }

@@ -92,7 +92,7 @@ end`, destPath);
 
         if (exists(path)) {
             string content = readText(path);
-            if (canFind(content, "ash")) {
+            if (canFind(content, "# ash")) {
                 writeln(t[0], ": Hook already installed. Skipping.");
                 continue;
             }

@@ -36,7 +36,7 @@ class OllamaProvider : Provider
         body["model"] = model;
         body["stream"] = true;
         body["messages"] = messages;
-        body["think"] = true;
+        //body["think"] = true;
 
         Request rq = Request();
         rq.useStreaming = true;
@@ -66,94 +66,130 @@ class OllamaProvider : Provider
         try
         {
             response = rq.post(endpoint, body.toString());
+
+            if (response.code >= 400)
+            {
+                spinner.stop();
+                writeln("\n\033[31mHTTP Error:\033[0m Received status code ", response.code);
+
+                string errBody;
+                foreach (chunk; response.receiveAsRange())
+                {
+                    errBody ~= cast(string) chunk;
+                }
+                if (errBody.length > 0)
+                {
+                    writeln("Details: ", errBody.strip());
+                }
+                return;
+            }
         }
         catch (Exception e)
         {
             spinner.stop();
-            writeln("Connection Error: ", e.msg);
+            writeln("\n\033[31mConnection Error:\033[0m Could not connect to Ollama. Ensure the server is running. (", e
+                    .msg, ")");
             return;
         }
 
         string buffer;
         string fullContent;
 
-        foreach (ubyte[] chunk; response.receiveAsRange())
+        try
         {
-            buffer ~= cast(string) chunk;
-            long idx;
-
-            while ((idx = buffer.indexOf('\n')) != -1)
+            foreach (ubyte[] chunk; response.receiveAsRange())
             {
-                auto line = buffer[0 .. idx].strip();
-                buffer = buffer[idx + 1 .. $];
+                buffer ~= cast(string) chunk;
+                long idx;
 
-                if (line.length == 0)
-                    continue;
-
-                JSONValue parsed;
-                try
+                while ((idx = buffer.indexOf('\n')) != -1)
                 {
-                    parsed = parseJSON(line);
+                    auto line = buffer[0 .. idx].strip();
+                    buffer = buffer[idx + 1 .. $];
 
-                    if ("done" in parsed && parsed["done"].type == JSONType.true_)
-                        break;
+                    if (line.length == 0)
+                        continue;
 
-                    if ("message" in parsed)
+                    JSONValue parsed;
+                    try
                     {
-                        auto message = parsed["message"];
+                        parsed = parseJSON(line);
 
-                        if ("thinking" in message && showThinking)
+                        if ("error" in parsed)
                         {
-                            string thinkText = message["thinking"].str;
-                            if (thinkText.length > 0)
-                            {
-                                spinner.stop();
-
-                                if (!isThinkingState)
-                                {
-                                    write("\033[90m");
-                                    isThinkingState = true;
-                                }
-
-                                write(thinkText);
-                                stdout.flush();
-                            }
+                            spinner.stop();
+                            writeln("\n\033[31mOllama API Error:\033[0m ", parsed["error"].str);
+                            return;
                         }
 
-                        if ("content" in message)
+                        if ("done" in parsed && parsed["done"].type == JSONType.true_)
+                            break;
+
+                        if ("message" in parsed)
                         {
-                            string contentText = message["content"].str;
-                            if (contentText.length > 0)
+                            auto message = parsed["message"];
+
+                            if ("thinking" in message && showThinking)
                             {
-                                spinner.stop();
-
-                                if (isThinkingState)
+                                string thinkText = message["thinking"].str;
+                                if (thinkText.length > 0)
                                 {
-                                    write("\033[0m\n");
-                                    isThinkingState = false;
-                                }
+                                    spinner.stop();
 
-                                write(contentText);
-                                stdout.flush();
-                                fullContent ~= contentText;
+                                    if (!isThinkingState)
+                                    {
+                                        write("\033[90m"); // Gray for thinking
+                                        isThinkingState = true;
+                                    }
+
+                                    write(thinkText);
+                                    stdout.flush();
+                                }
+                            }
+
+                            if ("content" in message)
+                            {
+                                string contentText = message["content"].str;
+                                if (contentText.length > 0)
+                                {
+                                    spinner.stop();
+
+                                    if (isThinkingState)
+                                    {
+                                        write("\033[0m\n"); // Reset color to default for actual response
+                                        isThinkingState = false;
+                                    }
+
+                                    write(contentText);
+                                    stdout.flush();
+                                    fullContent ~= contentText;
+                                }
                             }
                         }
                     }
-                }
-                catch (JSONException)
-                {
-                    continue;
+                    catch (JSONException)
+                    {
+                        continue;
+                    }
                 }
             }
+        }
+        catch (Exception e)
+        {
+            spinner.stop();
+            writeln("\n\033[31mStream Interrupted:\033[0m Connection to Ollama was lost during generation. (", e.msg, ")");
         }
 
         writeln();
 
-        messages.array ~= JSONValue([
-            "role": "assistant",
-            "content": fullContent
-        ]);
+        if (fullContent.length > 0)
+        {
+            messages.array ~= JSONValue([
+                "role": "assistant",
+                "content": fullContent
+            ]);
 
-        saveHistory(messages);
+            saveHistory(messages);
+        }
     }
 }

@@ -35,7 +35,8 @@ Provider createProvider(JSONValue cfg, bool showThinking)
             "http://localhost:11434/api/chat"
         );
     case "your-provider":
-        writeln("Edit /home/nanook/.config/ash/config.json to choose your provider, model and API key");
+        writeln(
+            "Edit /home/nanook/.config/ash/config.json to choose your provider, model and API key");
         return Provider.init;
     default:
         throw new Exception("Unknown provider");

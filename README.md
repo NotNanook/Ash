@@ -44,6 +44,9 @@ After installation edit the config file found under `~/.config/ash/config.json` 
 Other important files:
 - Chat history: `~/.ash_history.json`
 
+## Suported Platforms
+This project was only tested on Fedora Linux
+
 ## Dependencies
 `"argsd": "1.2.0"`<br>
 `"requests": "2.2.0"`
